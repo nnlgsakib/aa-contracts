@@ -37,6 +37,14 @@ contract EntryPoint is IEntryPoint {
     ) internal {
         uint256 totalGasCost = 0;
 
+        // Extract all signatures when using an aggregator
+        bytes[] memory signatures = new bytes[](ops.length);
+        if (aggregator != address(0)) {
+            for (uint256 i = 0; i < ops.length; i++) {
+                signatures[i] = ops[i].signature;
+            }
+        }
+
         for (uint256 i = 0; i < ops.length; i++) {
             UserOperation calldata op = ops[i];
             uint256 preGas = gasleft();
@@ -54,7 +62,7 @@ contract EntryPoint is IEntryPoint {
             );
             bytes memory signature = aggregator == address(0)
                 ? op.signature
-                : IAggregator(aggregator).aggregateSignatures(ops, op.signature);
+                : IAggregator(aggregator).aggregateSignatures(ops, signatures);
 
             // Validate paymaster if present
             address paymaster = _extractPaymaster(op.paymasterAndData);
