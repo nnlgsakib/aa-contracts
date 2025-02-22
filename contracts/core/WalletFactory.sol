@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IWalletFactory.sol";
 import "../proxies/ERC1967Proxy.sol";
+import "./Wallet.sol";
 
 contract WalletFactory is IWalletFactory {
     address public immutable walletImplementation;
